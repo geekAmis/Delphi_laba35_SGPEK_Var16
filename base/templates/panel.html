@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title id="title">Teacher Panel |</title>
+	<script src="/static/soket.io.min.js"></script>
+	<script type="text/javascript">
+		data = {{json_data}};
+		index_name = {{index_name}};
+
+		if (data.length <= 1){
+			alert('Error on load Page.');
+		} else{
+			alert('Добро пожаловать в панель редактирования. Выберите колонку с нужным учеником и нажмите на кнопку.');
+		}
+	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<style type="text/css">
+		@keyframes left_go {
+			0%{
+				opacity: 0.4;
+				transform: translate(-5000px,0);
+			}
+			50%{
+				opacity: 0.8;
+				transform: translate(500px,0);
+			}
+
+			80%{
+				opacity: 0.9;
+				transform: translate(-50px,0);
+			}
+			100%{
+				opacity: 1;
+				transform: translate(0px,0);
+			}
+		}
+		.block{
+			background-color: grey;
+		}
+		.table {
+			width: 100%;
+			border: none;
+			margin-bottom: 20px;
+			cursor: pointer;
+			animation: left_go ease 2.3s;
+		}
+		.table thead th {
+			font-weight: bold;
+			text-align: left;
+			border: none;
+			padding: 10px 15px;
+			background: #000;
+			font-size: 14px;
+			border-left: 1px solid #000;
+			border-right: 1px solid #fff;
+			animation: left_go ease 2s;
+
+		}
+		.table tbody td {
+			animation: left_go ease 2.7s;
+			text-align: left;
+			border-left: 1px solid #fff;
+			border-right: 1px solid #fff;
+			padding: 10px 15px;
+			font-size: 14px;
+			vertical-align: top;
+		}
+		.table thead tr th:first-child, .table tbody tr td:first-child {
+			border-left: none;
+		}
+		.table thead tr th:last-child, .table tbody tr td:last-child {
+			border-right: none;
+		}
+		.table tbody tr:nth-child(even){
+			padding: 11px 16px;
+			animation: left_go ease 3s;
+		}
+		body{
+			background-color: black;
+			color: white;
+			width: 99%;
+			height: 99%;
+			font-family: sans-serif;
+			animation: left_go linear 2s;
+		}
+		.choose{
+			background-color:#564e4e;
+		}
+
+		button{
+			width: 100%;
+			padding: 2%;
+			font-size: 4em;
+			font-family: sans-serif;
+			background-color: #564e4e;
+			border-radius: 30px;
+			align-items: center;
+		}
+		button:hover{
+			background-color: grey;border-radius: 55px;
+		}
+
+		.num{
+			transform: translate(-5000px,0);
+		}
+
+
+	</style>
+</head>
+<body>
+	<table class="table3 table"></table>
+	<table class="table1 table"></table>
+	<form action="javascript:;">
+		<input type="number" name="choose" class="num" value="0">
+		<input type="text" name="group" class="hide" value="{{group_name}}">
+		<button type="submit" onclick="todo();">Выбрать</button>
+	</form>
+	
+<script>
+	function todo(){
+		window.location.replace(`http://localhost/change/${index_name}/${document.querySelector('.num').value}`);
+	}
+	console.log(data[index_name]['group']);
+
+	var table = document.querySelector('.table3');
+	var table2 = document.querySelector('.table1');
+	var names =['ФИО','Ср. Балл','Телефон','отметки','ВК link','Папа','Мама','Долгов','Экзамены','Замeтка','День. Рожд.'];
+	var names2 = ['name','sum','phone','session_split','vk_link','parrent_male','parrent_female','dolgs','exams_split','note','birthday'];
+	function main_group(){
+		need = data[index_name];
+		document.getElementById('title').innerHTML = `${document.getElementById('title').innerHTML} ${need['group']}`;
+		var row = table.insertRow();
+		for (name in need['students'][0]){
+			if (name !== 'exams' && name !== 'session'){
+			var cell = row.insertCell()
+			cell.innerHTML = `${names[names2.findIndex(i => i == name)]}`;
+			}
+		}
+		var row = table.insertRow();
+		for (index in need['students']){
+			var student = need['students'][index];
+			var row = table.insertRow();
+			row.id = `${index}`;
+			row.classList.add("block");
+			if (index == 0){
+				row.classList.add("choose");
+			}
+			
+			for (sdata in student){
+				if (sdata !== 'exams' && sdata !== 'session'){
+					var cell = row.insertCell();
+					cell.innerHTML = `${student[sdata]}`;
+				}
+			}
+		}
+		var row = table2.insertRow();var cell = row.insertCell();
+		for (exam in need['students'][0]['exams']){
+			var cell = row.insertCell()
+			cell.innerHTML = `${need['students'][0]['exams'][exam]}`;
+		}
+		for (index in need['students']){
+			var student = need['students'][index];
+			var row = table2.insertRow();
+			row.id = `${index}`;
+			row.classList.add("block");
+			var cell = row.insertCell();
+			cell.innerHTML = `${student['name']}`;
+			for (session in student['session']){
+				var cell = row.insertCell();
+				cell.innerHTML = `${student['session'][session]}`;
+			}
+		}
+		//table2
+	}
+
+
+	main_group();
+	
+	
+	
+</script>
+
+<script>
+	$('.block').click(function(e) {
+		$('.choose').removeClass('choose');
+		if (e.target.parentElement.classList[1] == 'choose') {
+			$('.choose').removeClass('choose');
+		}
+		e.target.parentElement.classList.toggle('choose');
+		$('#'+e.target.parentElement.id).addClass('choose');
+		
+		$('.num').val(e.target.parentElement.id);
+		console.log(e.target.parentElement.id);
+
+	});
+	$(document).click(function(e){
+		if (e.target.parentElement.classList[1] != 'choose') {
+			$('.choose').removeClass('choose');
+		}
+	});
+
+	$('.hide').hide();
+</script>
+</body>
+</html>
