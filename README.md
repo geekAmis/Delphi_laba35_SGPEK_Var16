@@ -18,7 +18,7 @@ pip install -r requiments.txt
 
 (Просто 2 клика на main.py)
 
----------------
+
 
 Разархивируете Client.zip и там все исходники моего проекта.
 ---------------------------------------------
@@ -40,7 +40,7 @@ Dependencies have been downloaded. Open it main.py
 
 (Just 2 clicks on main.py )
 
----------------
+
 
 Unzip the Client.zip and there are all the sources of my project.
 
